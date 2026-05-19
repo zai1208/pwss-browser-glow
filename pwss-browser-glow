@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Stage 1: Resolve the location and identity
+read -r URL FPR <<<$(./pwss-fetch-https "$1")
+
+if [[ -z "$URL" ]]; then exit 1; fi
+
+# Stage 2 & 3: Fetch, Verify, and Render
+curl -sL "$URL" | ./pwss-core "$FPR" | sed "s|{{< pgp_banner >}}|\n---\n⚡ **Sovereign Identity Verified**\nFingerprint: \`$FPR\`\nSource: \`$URL\`\n---|g" | glow
